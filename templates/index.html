@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --background-color: #f8f9fc;
+            --text-color: #5a5c69;
+            --card-bg: #ffffff;
+            --sidebar-width: 250px;
+            --sidebar-bg: #4e73df;
+            --sidebar-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --background-color: #1a1c23;
+            --text-color: #e3e6f0;
+            --card-bg: #2d2f3a;
+            --sidebar-bg: #2d2f3a;
+            --sidebar-text: #e3e6f0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 1rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .sidebar-item {
+            margin: 0.5rem 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 0.35rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-link.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            padding: 1rem 2rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(231, 74, 59, 0.1);
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid #d1d3e2;
+            border-radius: 0.35rem;
+            padding: 0.75rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2e59d9;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 0.35rem;
+            text-align: center;
+        }
+
+        .churn {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .no-churn {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .feedback-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .rating i {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .rating i:hover {
+            transform: scale(1.2);
+        }
+
+        .rating i.active {
+            color: #f6c23e;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .stats-card {
+            background: linear-gradient(45deg, var(--primary-color), #224abe);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card p {
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        /* Add new styles for counter animation */
+        .counter {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 1rem 0;
+        }
+
+        .counter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .counter-wrapper i {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-header h2 {
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-header h2 i {
+            color: #4CAF50;
+        }
+
+        .edit-profile-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .profile-info {
+            display: grid;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: #4CAF50;
+            margin-top: 3px;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-content label {
+            display: block;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .info-content span {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: #45a049;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .profile-actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .save-profile-btn, .cancel-profile-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .save-profile-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .cancel-profile-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .save-profile-btn:hover, .cancel-profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .save-profile-btn:hover {
+            background: #45a049;
+        }
+
+        .cancel-profile-btn:hover {
+            background: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="fas fa-chart-line"></i>
+                <span>Churn Predictor</span>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard & Analytics</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#about" class="sidebar-link" data-section="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About Us</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#prediction" class="sidebar-link" data-section="prediction">
+                    <i class="fas fa-calculator"></i>
+                    <span>Churn Prediction</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#profile" class="sidebar-link" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#feedback" class="sidebar-link" data-section="feedback">
+                    <i class="fas fa-comments"></i>
+                    <span>Feedback</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="#" class="navbar-brand">
+                <i class="fas fa-chart-line"></i>
+                <span>Churn Predictor</span>
+            </a>
+            <div class="navbar-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <div class="container">
+                <h2 class="mb-4">Dashboard & Analytics</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <div class="counter-wrapper">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <h3>Total Customers</h3>
+                                    <div class="counter" data-target="7043">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card" style="background: linear-gradient(45deg, #1cc88a, #13855c);">
+                            <div class="counter-wrapper">
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <h3>Active Customers</h3>
+                                    <div class="counter" data-target="5174">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card" style="background: linear-gradient(45deg, #e74a3b, #be2617);">
+                            <div class="counter-wrapper">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div>
+                                    <h3>Churned Customers</h3>
+                                    <div class="counter" data-target="1869">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Monthly Churn Rate Trend</h5>
+                                <canvas id="churnChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Customer Distribution by Contract Type</h5>
+                                <canvas id="customerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Section -->
+        <div id="prediction" class="section">
+            <div class="container">
+                <h1 class="text-center mb-4">Customer Churn Prediction</h1>
+                <form id="predictionForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select class="form-control" name="gender" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Senior Citizen</label>
+                                <select class="form-control" name="SeniorCitizen" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Partner</label>
+                                <select class="form-control" name="Partner" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Dependents</label>
+                                <select class="form-control" name="Dependents" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Tenure (months)</label>
+                                <input type="number" class="form-control" name="tenure" min="0" max="72" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Phone Service</label>
+                                <select class="form-control" name="PhoneService" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Multiple Lines</label>
+                                <select class="form-control" name="MultipleLines" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No phone service">No phone service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Internet Service</label>
+                                <select class="form-control" name="InternetService" required>
+                                    <option value="DSL">DSL</option>
+                                    <option value="Fiber optic">Fiber optic</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Online Security</label>
+                                <select class="form-control" name="OnlineSecurity" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Online Backup</label>
+                                <select class="form-control" name="OnlineBackup" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Device Protection</label>
+                                <select class="form-control" name="DeviceProtection" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Tech Support</label>
+                                <select class="form-control" name="TechSupport" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Streaming TV</label>
+                                <select class="form-control" name="StreamingTV" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Streaming Movies</label>
+                                <select class="form-control" name="StreamingMovies" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No internet service">No internet service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Contract</label>
+                                <select class="form-control" name="Contract" required>
+                                    <option value="Month-to-month">Month-to-month</option>
+                                    <option value="One year">One year</option>
+                                    <option value="Two year">Two year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Paperless Billing</label>
+                                <select class="form-control" name="PaperlessBilling" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select class="form-control" name="PaymentMethod" required>
+                                    <option value="Electronic check">Electronic check</option>
+                                    <option value="Mailed check">Mailed check</option>
+                                    <option value="Bank transfer (automatic)">Bank transfer (automatic)</option>
+                                    <option value="Credit card (automatic)">Credit card (automatic)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Monthly Charges ($)</label>
+                                <input type="number" class="form-control" name="MonthlyCharges" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Total Charges ($)</label>
+                                <input type="number" class="form-control" name="TotalCharges" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Predict Churn</button>
+                    </div>
+                </form>
+
+                <div id="result" class="result-box text-center">
+                    <h3>Prediction Result</h3>
+                    <p id="predictionText"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="section">
+            <div class="container">
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <h2><i class="fas fa-user-circle"></i> Profile</h2>
+                    </div>
+                    <div class="profile-content">
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <div class="info-content">
+                                    <label>Name:</label>
+                                    <span id="profile-name">Suvendu Sekhar Sahoo</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <div class="info-content">
+                                    <label>Phone:</label>
+                                    <span id="profile-phone">8917234672</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <div class="info-content">
+                                    <label>Department:</label>
+                                    <span id="profile-dept">Mining Engineering</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div class="info-content">
+                                    <label>Location:</label>
+                                    <span id="profile-location">NIT Rourkela, Sundergarh, India</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div id="feedback" class="section">
+            <div class="container">
+                <h3 class="mb-4">Feedback & Comments</h3>
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label class="form-label">How would you rate your experience?</label>
+                        <div class="rating">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="feedback" class="form-label">Your Feedback</label>
+                        <textarea class="form-control" id="feedback" rows="3" placeholder="Share your thoughts..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="suggestions" class="form-label">Suggestions for Improvement</label>
+                        <textarea class="form-control" id="suggestions" rows="2" placeholder="Any suggestions to make it better?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- About Us Section -->
+        <div id="about" class="section">
+            <div class="container">
+                <h2 class="mb-4 text-center">About Churn Prediction</h2>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm p-3">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAoNYV0AosCQ1X418yumqdXgWDYlLTvMjZUg&s" class="card-img-top mx-auto d-block" style="width: 100%; max-width: 320px; height: 180px; object-fit: cover; border-radius: 12px;" alt="Business Analytics Graph">
+                            <ul class="mt-3 ps-3" style="font-size: 1rem;">
+                                <li>Churn is when customers stop using a service or product.</li>
+                                <li>Tracking churn helps businesses understand customer satisfaction and loyalty.</li>
+                                <li>High churn rates can signal issues with product, service, or competition.</li>
+                                <li>Reducing churn is key to sustainable business growth.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm p-3">
+                            <img src="https://daxg39y63pxwu.cloudfront.net/images/blog/churn-models/Customer_Churn_Prediction_Models_in_Machine_Learning.png" class="card-img-top mx-auto d-block" style="width: 100%; max-width: 320px; height: 180px; object-fit: cover; border-radius: 12px;" alt="Business Analytics Graph">
+                            <ul class="mt-3 ps-3" style="font-size: 1rem;">
+                                <li>Churn prediction uses data to identify customers likely to leave.</li>
+                                <li>Machine learning models analyze usage, demographics, and behavior.</li>
+                                <li>Early identification enables proactive retention strategies.</li>
+                                <li>Helps businesses focus on high-risk customers and improve experience.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm p-3">
+                            <img src="https://lightpointglobal.com/wp-content/uploads/2024/02/Customer-Churn-Analytics-1024x683.jpg" class="card-img-top mx-auto d-block" style="width: 100%; max-width: 320px; height: 180px; object-fit: cover; border-radius: 12px;" alt="Business Analytics Graph">
+                            <ul class="mt-3 ps-3" style="font-size: 1rem;">
+                                <li>Customer retention is more cost-effective than acquisition.</li>
+                                <li>Effective churn prediction boosts loyalty and satisfaction.</li>
+                                <li>Retained customers are more likely to refer others and spend more.</li>
+                                <li>Retention strategies drive long-term business success.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title mb-3">What is Customer Churn?</h3>
+                                <p class="card-text">Customer churn, also known as customer attrition, refers to the loss of clients or subscribers. It is a key metric for businesses, as high churn rates can indicate dissatisfaction, better offers from competitors, or a lack of engagement. Understanding why customers leave helps companies improve their products, services, and customer relationships.</p>
+                                <h3 class="card-title mb-3 mt-4">Why is Churn Prediction Important?</h3>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Identify at-risk customers before they leave</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Implement proactive retention strategies</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Reduce customer acquisition costs</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Improve customer lifetime value and satisfaction</li>
+                                </ul>
+                                <h3 class="card-title mb-3 mt-4">How Does Churn Prediction Work?</h3>
+                                <p class="card-text">Churn prediction models use machine learning and statistical analysis to evaluate customer data, such as demographics, usage patterns, payment history, and support interactions. By identifying patterns and risk factors, these models can accurately forecast which customers are likely to churn, allowing businesses to intervene early.</p>
+                                <h3 class="card-title mb-3 mt-4">Business Impact</h3>
+                                <p class="card-text">Reducing churn has a direct impact on revenue and growth. Companies that successfully predict and reduce churn can allocate resources more efficiently, increase customer loyalty, and gain a competitive edge in the market.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Counter Animation
+            function animateCounter(element) {
+                const target = parseInt(element.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const step = target / (duration / 16); // 60fps
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        element.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            }
+
+            // Start counter animation when dashboard is shown
+            $('.sidebar-link').click(function(e) {
+                e.preventDefault();
+                const section = $(this).data('section');
+                $('.sidebar-link').removeClass('active');
+                $(this).addClass('active');
+                $('.section').removeClass('active');
+                $(`#${section}`).addClass('active');
+
+                if (section === 'dashboard') {
+                    $('.counter').each(function() {
+                        animateCounter(this);
+                    });
+                }
+            });
+
+            // Initialize counters on page load
+            $('.counter').each(function() {
+                animateCounter(this);
+            });
+
+            // Theme Toggle
+            const themeToggle = $('#themeToggle');
+            const body = $('body');
+            
+            themeToggle.click(function() {
+                if (body.attr('data-theme') === 'dark') {
+                    body.removeAttr('data-theme');
+                    themeToggle.html('<i class="fas fa-moon"></i>');
+                } else {
+                    body.attr('data-theme', 'dark');
+                    themeToggle.html('<i class="fas fa-sun"></i>');
+                }
+            });
+
+            // Star Rating
+            $('.rating i').click(function() {
+                const rating = $(this).data('rating');
+                $('.rating i').removeClass('active');
+                $('.rating i').each(function(index) {
+                    if (index < rating) {
+                        $(this).addClass('active');
+                    }
+                });
+            });
+
+            // Feedback Form
+            $('#feedbackForm').submit(function(e) {
+                e.preventDefault();
+                const rating = $('.rating i.active').length;
+                const feedback = $('#feedback').val();
+                const suggestions = $('#suggestions').val();
+
+                $.ajax({
+                    url: '/submit_feedback',
+                    method: 'POST',
+                    data: {
+                        rating: rating,
+                        feedback: feedback,
+                        suggestions: suggestions
+                    },
+                    success: function(response) {
+                        alert('Thank you for your feedback!');
+                        $('#feedbackForm')[0].reset();
+                        $('.rating i').removeClass('active');
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+
+            // Prediction Form
+            $('#predictionForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: '/predict',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#result').show();
+                        if (response.prediction === 'Churn') {
+                            $('#result').removeClass('no-churn').addClass('churn');
+                        } else {
+                            $('#result').removeClass('churn').addClass('no-churn');
+                        }
+                        $('#predictionText').text('Prediction: ' + response.prediction);
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+
+            // Initialize Charts with real data
+            const churnCtx = document.getElementById('churnChart').getContext('2d');
+            new Chart(churnCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Churn Rate (%)',
+                        data: [26.5, 24.8, 23.1, 21.4, 19.7, 18.0, 16.3, 14.6, 12.9, 11.2, 9.5, 7.8],
+                        borderColor: '#e74a3b',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Churn Rate Trend'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Churn Rate (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const customerCtx = document.getElementById('customerChart').getContext('2d');
+            new Chart(customerCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Month-to-Month', 'One Year', 'Two Year'],
+                    datasets: [{
+                        data: [45, 30, 25],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Customer Distribution by Contract Type'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
