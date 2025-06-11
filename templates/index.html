@@ -20,6 +20,8 @@
             --sidebar-width: 250px;
             --sidebar-bg: #4e73df;
             --sidebar-text: #ffffff;
+            --about-text-color: #212529;  /* Darker color for about section */
+            --about-text-size: 1.05rem;   /* Slightly larger font size */
         }
 
         [data-theme="dark"] {
@@ -30,6 +32,8 @@
             --card-bg: #2d2f3a;
             --sidebar-bg: #2d2f3a;
             --sidebar-text: #e3e6f0;
+            --about-text-color: #e3e6f0;  /* Lighter color for dark mode */
+            --about-text-size: 1.05rem;
         }
 
         body {
@@ -174,6 +178,10 @@
             box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         }
 
+        .card{
+            background-color: var(--card-bg);
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -305,7 +313,7 @@
         }
 
         .profile-section {
-            background: white;
+            background-color: var(--card-bg);
             border-radius: 10px;
             padding: 25px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -318,11 +326,11 @@
             align-items: center;
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--card-bg);
         }
 
         .profile-header h2 {
-            color: #2c3e50;
+            color: var(--text-color);
             margin: 0;
             display: flex;
             align-items: center;
@@ -363,13 +371,13 @@
             align-items: flex-start;
             gap: 15px;
             padding: 15px;
-            background: #f8f9fa;
+            background-color: var(--card-bg);
             border-radius: 8px;
             transition: all 0.3s ease;
         }
 
         .info-item:hover {
-            background: #f0f0f0;
+            background-color: var(--card-bg);
             transform: translateX(5px);
         }
 
@@ -391,7 +399,7 @@
         }
 
         .info-content span {
-            color: #2c3e50;
+            color: var(--text-color);
             font-size: 16px;
             font-weight: 500;
         }
@@ -795,28 +803,28 @@
                             <div class="info-item">
                                 <i class="fas fa-user"></i>
                                 <div class="info-content">
-                                    <label>Name:</label>
-                                    <span id="profile-name">Suvendu Sekhar Sahoo</span>
+                                    <label for="profile-name">Name:</label>
+                                    <span id="profile-name">Roop Kumar Munsun Biswal</span>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i class="fas fa-phone"></i>
                                 <div class="info-content">
-                                    <label>Phone:</label>
-                                    <span id="profile-phone">8917234672</span>
+                                    <label for="profile-phone">Phone:</label>
+                                    <span id="profile-phone">7735786783</span>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i class="fas fa-graduation-cap"></i>
                                 <div class="info-content">
-                                    <label>Department:</label>
-                                    <span id="profile-dept">Mining Engineering</span>
+                                    <label for="profile-dept">Department:</label>
+                                    <span id="profile-dept">Computer Science and Engineering</span>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <div class="info-content">
-                                    <label>Location:</label>
+                                    <label for="profile-location">Location:</label>
                                     <span id="profile-location">NIT Rourkela, Sundergarh, India</span>
                                 </div>
                             </div>
@@ -895,21 +903,33 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-md-12">
-                        <div class="card bg-light border-0 shadow-sm">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body">
-                                <h3 class="card-title mb-3">What is Customer Churn?</h3>
-                                <p class="card-text">Customer churn, also known as customer attrition, refers to the loss of clients or subscribers. It is a key metric for businesses, as high churn rates can indicate dissatisfaction, better offers from competitors, or a lack of engagement. Understanding why customers leave helps companies improve their products, services, and customer relationships.</p>
-                                <h3 class="card-title mb-3 mt-4">Why is Churn Prediction Important?</h3>
+                                <h3 class="card-title mb-3 mt-4" style="color: var(--about-text-color); font-size: 1.1rem;">What is Customer Churn?</h3>
+                                <p class="card-text" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">Customer churn, also known as customer attrition, refers to the loss of clients or subscribers. It is a key metric for businesses, as high churn rates can indicate dissatisfaction, better offers from competitors, or a lack of engagement. Understanding why customers leave helps companies improve their products, services, and customer relationships.</p>
+                                <h3 class="card-title mb-3 mt-4" style="color: var(--about-text-color); font-size: 1.1rem;">Why is Churn Prediction Important?</h3>
                                 <ul class="list-group list-group-flush mb-3">
-                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Identify at-risk customers before they leave</li>
-                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Implement proactive retention strategies</li>
-                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Reduce customer acquisition costs</li>
-                                    <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i>Improve customer lifetime value and satisfaction</li>
+                                    <li class="list-group-item bg-transparent" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">
+                                        <i class="fas fa-check-circle me-2" style="color: var(--success-color);"></i>
+                                        Identify at-risk customers before they leave
+                                    </li>
+                                    <li class="list-group-item bg-transparent" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">
+                                        <i class="fas fa-check-circle me-2" style="color: var(--success-color);"></i>
+                                        Implement proactive retention strategies
+                                    </li>
+                                    <li class="list-group-item bg-transparent" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">
+                                        <i class="fas fa-check-circle me-2" style="color: var(--success-color);"></i>
+                                        Reduce customer acquisition costs
+                                    </li>
+                                    <li class="list-group-item bg-transparent" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">
+                                        <i class="fas fa-check-circle me-2" style="color: var(--success-color);"></i>
+                                        Improve customer lifetime value and satisfaction
+                                    </li>
                                 </ul>
-                                <h3 class="card-title mb-3 mt-4">How Does Churn Prediction Work?</h3>
-                                <p class="card-text">Churn prediction models use machine learning and statistical analysis to evaluate customer data, such as demographics, usage patterns, payment history, and support interactions. By identifying patterns and risk factors, these models can accurately forecast which customers are likely to churn, allowing businesses to intervene early.</p>
-                                <h3 class="card-title mb-3 mt-4">Business Impact</h3>
-                                <p class="card-text">Reducing churn has a direct impact on revenue and growth. Companies that successfully predict and reduce churn can allocate resources more efficiently, increase customer loyalty, and gain a competitive edge in the market.</p>
+                                <h3 class="card-title mb-3 mt-4" style="color: var(--about-text-color); font-size: 1.1rem;">How Does Churn Prediction Work?</h3>
+                                <p class="card-text" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">Churn prediction models use machine learning and statistical analysis to evaluate customer data, such as demographics, usage patterns, payment history, and support interactions. By identifying patterns and risk factors, these models can accurately forecast which customers are likely to churn, allowing businesses to intervene early.</p>
+                                <h3 class="card-title mb-3 mt-4" style="color: var(--about-text-color); font-size: 1.1rem;">Business Impact</h3>
+                                <p class="card-text" style="color: var(--about-text-color); font-size: var(--about-text-size); line-height: 1.6;">Reducing churn has a direct impact on revenue and growth. Companies that successfully predict and reduce churn can allocate resources more efficiently, increase customer loyalty, and gain a competitive edge in the market.</p>
                             </div>
                         </div>
                     </div>
